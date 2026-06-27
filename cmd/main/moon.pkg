@@ -1,0 +1,7 @@
+// import {
+//   "caassien/moonorbit" @lib,
+// }
+
+options(
+  "is-main": true,
+)
