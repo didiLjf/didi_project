@@ -17,9 +17,13 @@ pub fn ping_pong_behavior(_context : Context, _state : Int, msg : PingPongMsg) -
   }
 }
 
-test "ping pong example" {
-  let system = ActorSystem::new("ping_pong")
-  let _actor = system.spawn(ping_pong_behavior, 0)
-  let _ = ping_pong_behavior(Context::new(0, 0), 0, Ping)
-  let _ = ping_pong_behavior(Context::new(0, 0), 0, Pong)
+async test "ping pong example" {
+  @async.with_task_group((group) => {
+    let system = ActorSystem::new("ping_pong", group)
+    let actor = system.spawn(ping_pong_behavior, 0)
+    actor.send(Ping)
+    actor.send(Pong)
+    // Sleep to let background coroutines process the messages
+    @async.sleep(50)
+  })
 }

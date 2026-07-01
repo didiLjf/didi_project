@@ -7,7 +7,17 @@ pub struct Context {
 /// A strongly typed reference to an actor.
 pub struct ActorRef[Msg] {
   id : Int
+  mailbox : @aqueue.Queue[Msg]
 }
 
 /// A Behavior defines how an actor reacts to messages and updates its state.
 pub type Behavior[State, Msg] = (Context, State, Msg) -> State
+
+/// Sends a message to the actor.
+pub fn[Msg] ActorRef::send(self : ActorRef[Msg], msg : Msg) -> Unit {
+  try {
+    let _ = self.mailbox.try_put(msg)
+  } catch {
+    _ => ()
+  }
+}
